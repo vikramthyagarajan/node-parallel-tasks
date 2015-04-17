@@ -1,0 +1,35 @@
+{
+  "name": "node-parallel-tasks",
+  "version": "0.0.0",
+  "description": "A tool to share tasks among machines in your local area network",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vikramthyagarajan/node-parallel-tasks.git"
+  },
+  "keywords": [
+    "forever",
+    "nodejs",
+    "tasks",
+    "parallel",
+    "computing",
+    "networks",
+    "service",
+    "forever",
+    "portscanner"
+  ],
+  "author": "Vikram Thyagarajan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vikramthyagarajan/node-parallel-tasks/issues"
+  },
+  "homepage": "https://github.com/vikramthyagarajan/node-parallel-tasks",
+  "dependencies": {
+    "async": "^0.9.0",
+    "conga-annotations": "^0.1.8",
+    "winston": "^1.0.0"
+  }
+}
