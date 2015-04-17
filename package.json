@@ -30,6 +30,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "conga-annotations": "^0.1.8",
+    "socket.io": "^1.3.5",
     "winston": "^1.0.0"
   }
 }
