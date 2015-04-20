@@ -1,13 +1,14 @@
 var winston=require('winston');
-// var PortScanner=require('./lib/portscanner.js');
+var config=require('./config/config.js');
+var PortScanner=require('./lib/portscanner.js');
 var SocketCommunicator=require('./lib/socketcomm.js');
+var ExecutionEngine=require('./lib/executionengine.js');
 
-var a=5
-b=10;
-
-var currentSocketComm=new SocketCommunicator();
-currentSocketComm.connectTo([]);
-
-// var currentPortScanner=new PortScanner({lan:'192.168.2',port:'8000'});
-// currentPortScanner.scanPorts(function(err,connectedMachines){console.log(connectedMachines)});
+var currentPortScanner=new PortScanner({lan:config.lan,port:config.port});
+currentPortScanner.scanPorts(function(err,connectedMachines){
+	console.log('Connected Machines are-');
+	console.log(connectedMachines)
+	var currentSocketComm=new SocketCommunicator();
+	currentSocketComm.connectTo(connectedMachines);
+});
 
