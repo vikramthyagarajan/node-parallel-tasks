@@ -13,6 +13,12 @@ currentPortScanner.scanPorts(function(err,connectedMachines){
 	var currentSocketComm=SocketCommunicator.getSocketCommunicator();
 	currentSocketComm.connectTo(connectedMachines,function(){
 		console.log('connected is done');
+		executionEngine.executeMapReduce([1,2,3,4],function(elem,innerC) {
+			innerC(null,elem+1);
+		},function(err,results) {
+			console.log('got results');
+			console.log(results);
+		},{});
 	});
 });
 
