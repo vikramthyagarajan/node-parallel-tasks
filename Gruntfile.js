@@ -2,17 +2,48 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
+    docs:{
+      src:['lib/**/*.js','config/*/*.js'],
+      destination:'docs'
+    },
+    watch:{
+      jsdoc:{
+        files:'<%= docs.src %>',
+        tasks:['jsdoc'],
+        options:{
+          livereload:true
+        }
+      },
+    },
     jsdoc : {
         dist : {
-            src: ['lib/*.js', 'config/*.js'],
+            src: '<%= docs.src %>',
             options: {
-                destination: 'docs'
+                destination: '<%= docs.destination %>'
             }
         }
+    },
+    connect:{
+      server:{
+        options: {
+          port: 3225,
+          base:'<%= docs.destination %>',
+          open:true,
+          livereload:true
+        }
+      }
     }
   });
 
-  // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.registerTask('docs',function(target) {
+    grunt.task.run(['jsdoc','connect','watch:jsdoc']);
+  });
+  grunt.registerTask('serveDocs',function(target) {
+    require('open')('http://localhost:3225/');
+  })
+  // Load the plugin that provides the "uglify" task.
 
 };
