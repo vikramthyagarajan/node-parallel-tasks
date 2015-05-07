@@ -38,8 +38,14 @@ var _=require('lodash');
 // var statuses=['idle','awaitingReplies',]
 
 /**
- * ExecutionEngine makes sure that the clients are ready for executing the functions.
- * If needed, the environment/stubs are created and then the required functions are executed
+ * Constructor that sets up the Execution engine and initializes it
+ * @class
+ * @requires Sandbox
+ * @classdesc
+ * ExecutionEngine is a Singleton that manages the clients executing the functions.
+ * It makes sure that the environment/stubs are created and ready for the required functions to be executed
+ * @constructor
+ * @param {SocketCommunicator} socketCommunicator The Global Singleton SocketCommunicator for this instance
  */
 function ExecutionEngine(socketCommunicator) {
 	ExecutionEngine.executionEngine=this;
@@ -53,26 +59,52 @@ function ExecutionEngine(socketCommunicator) {
 	this.err=null;
 	this.results=[];
 	this.socketCommunicator=socketCommunicator;
+	/**
+	 * @function
+	 * @inner
+	 * Function that runs after a timeout. Is used to collect the resources that are available and are willing to
+	 * ready to execute functions on them. This function waits for a timeout and only the machines which respond
+	 * are picked. All these arguments are required because this function runs on a setTimeout
+	 * @param  {Array} array              The whole array that needs to be shared
+	 * @param  {Array} resources          The current set of resources
+	 * @param  {Sandbox} sandbox            The current Sandbox that is being used
+	 * @param  {SocketCommunicator} socketCommunicator The global singleton SocketCommunicator of this instance
+	 * @param  {ExecutionEngine} currentEngine      The self ExecutionEngine for making changes
+	 */
+	var onResourceAcquisitionTimeout=function(array,resources,sandbox,socketCommunicator,currentEngine) {
+		//we gotta move on. The current resources are all the resources available.
+		if(resources.length!=0){
+			var step=Math.floor(array.length/resources.length);
+			var lastStep=0;
+			var commonData=sandbox.getSandboxEmitData();
+			resources.forEach(function(resource) {
+				var data=_.clone(commonData);
+				data.array=array.slice(lastStep,lastStep+step);
+				lastStep+=step;
+				resource.emitEnvironmentData(data);
+			});
+		}
+		console.log('got the resources. There are '+resources.length);
+		if(resources.length==0){
+			console.log('there are no resources. Performing function locally');
+			ExecutionEngine.executeFunctionLocally(array, sandbox, currentEngine);
+		}
+	}
 }
-
-// async.each(array,function(elem,innerC) {
-// 	innerC(null,elem+1);
-// },function(err,results) {
-// 	console.log(results);
-// });
 
 /**
  * This does the mapReduce capabilities of the system. Usually, these are the functions within the async callbacks.
- * 
- * @param  {function} maps the stuff that needs to be done in each client
- * @param  {object} {environment:{}}
- * @return {callback} which 
+ *
+ * @param {JSON} array The array on which the map has to be executed
+ * @param  {function} map  Function to map the stuff that needs to be done in each client
+ * @param  {function} reduce  The reduce function to collate the results
+ * @param  {object} options Contains options like the scope of the closure example {scope:{testVariable:1}}
  */
 ExecutionEngine.prototype.executeMapReduce = function(array,map,reduce,options) {
 	if(this.status=='idle'){
 		this.status='running';
 		this.resetExecutionEngine();
-		this.sandbox.initializeSandbox(map,reduce,options.scope);
+		this.sandbox.initializeSandbox(array,map,reduce,options.scope);
 		this.array=array;
 		this.options=options;
 		this.startTime=new Date().getTime();
@@ -83,38 +115,37 @@ ExecutionEngine.prototype.executeMapReduce = function(array,map,reduce,options) 
 		},config.resourceAcquisitionTimeout);
 	}
 };
-var onResourceAcquisitionTimeout=function(array,resources,sandbox,socketCommunicator,currentEngine) {
-	//we gotta move on. The current resources are all the resources available.
-	if(resources.length!=0&amp;&amp;resources.length>=array.length){
-		var step=Math.floor(array.length/resources.length);
-		var lastStep=0;
-		var commonData=sandbox.getSandboxEmitData();
-		resources.forEach(function(resource) {
-			var data=_.clone(commonData);
-			data.array=array.slice(lastStep,lastStep+step);
-			lastStep+=step;
-			resource.emitEnvironmentData(data);
-		});
-		sandbox.setArray(array.slice(lastStep));
-	}
-	else sandbox.setArray(array);
-	console.log('got the resources. There are '+resources.length);
-	if(resources.length==0){
-		console.log('there are no resources. Performing function locally');
-		ExecutionEngine.executeFunctionLocally(array, sandbox, currentEngine);
-	}
-	socketCommunicator.emitEvent('readyEnvironment');
-}
+/**
+ * Function that adds to available resources if within the resrouce timeout
+ * @function
+ * @param {CommunicationEngine} socketCommEngine The CommunicationEngine of the socket to add to resources
+ */
 ExecutionEngine.prototype.addToResources = function(socketCommEngine) {
 	if(new Date().getTime()-this.startTime&lt;=config.resourceAcquisitionTimeout)
 		this.resources.push(socketCommEngine);
 };
+/**
+ * Function that initializes environment for execution
+ * @function
+ * @param  {JSON} data          The data used to initialize the Sandbox
+ * @param  {Function} finalCallback Callback called once environment is initialized
+ */
 ExecutionEngine.prototype.initializeEnvironment = function(data,finalCallback) {
 	this.sandbox.initializeEnvironment(finalCallback);
 };
+/**
+ * Function to trigger the map function execution
+ * @function
+ * @param  {Function} finalCallback Callback called after map function executes
+ */
 ExecutionEngine.prototype.executeMapFunction = function(finalCallback) {
 	this.sandbox.executeMapFunction(finalCallback);
 };
+/**
+ * Function that is called when a client initializes its Environment. Used to keep track of resources and start execution once they're done
+ * @function
+ * @param  {CommunicationEngine} socketCommEngine The CommunicationEngine of the socket
+ */
 ExecutionEngine.prototype.onSocketEnvironmentInitialized = function(socketCommEngine) {
 	//check if everyone has initialized their env
 	console.log('one person has inited environment');
@@ -127,6 +158,14 @@ ExecutionEngine.prototype.onSocketEnvironmentInitialized = function(socketCommEn
 		this.socketCommunicator.emitEvent('startExecution');
 	}
 };
+/**
+ * Function that aggregates the results from all the clients
+ * @function
+ * @param  {CommunicationEngine} socketCommEngine 
+ * @param  {Error} err              Error returned by client
+ * @param  {JSON} results          Results returned by client
+ * @param  {Function} finalCallback    Called after results are aggregated
+ */
 ExecutionEngine.prototype.aggregateResults = function(socketCommEngine,err,results,finalCallback) {
 	console.log('one person has executed map');
 	var ind=_.findIndex(this.resourcesExecutionDone,{id:socketCommEngine.socket.id});
@@ -135,15 +174,19 @@ ExecutionEngine.prototype.aggregateResults = function(socketCommEngine,err,resul
 		if(err)
 			this.err=err;
 		if(results){
-			this.results.concat(results);
+			this.results=this.results.concat(results);
 		}
 	}
 	if(this.resources.length==this.resourcesExecutionDone.length){
 		console.log('everyone has finished execution');
-		console.log('aggregating results done');
+		console.log('aggregating results');
 		this.sandbox.executeReduceFunction(this.err,this.results,finalCallback);
 	}
 };
+/**
+ * Function to reset the Engine
+ * @function
+ */
 ExecutionEngine.prototype.resetExecutionEngine = function() {
 	this.status='idle';
 	this.resources=[];
@@ -155,12 +198,20 @@ ExecutionEngine.prototype.resetExecutionEngine = function() {
 	this.results=[];
 	this.sandbox.cleanSandbox();
 };
+/**
+ * Function to Execute the function locally if no resources are available
+ * @function
+ */
 ExecutionEngine.executeFunctionLocally = function(array,sandbox,execEngine) {
 	async.map(array,sandbox.mapFunction,function(err,results) {
 		sandbox.reduceFunction(err,results);
 		execEngine.status='idle';
 	});
 };
+/**
+ * Getter for the current singleton ExecutionEngine
+ * @function
+ */
 ExecutionEngine.getExecutionEngine=function (socketCommunicator) {
 	if(this.executionEngine)
 		return this.executionEngine;
@@ -178,13 +229,13 @@ module.exports=ExecutionEngine;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CommunicationEngine">CommunicationEngine</a></li><li><a href="global.html#ExecutionEngine">ExecutionEngine</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CommunicationEngine">CommunicationEngine</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Thu May 07 2015 01:04:32 GMT+0530 (IST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Thu May 07 2015 14:39:13 GMT+0530 (IST)
 </footer>
 
 <script> prettyPrint(); </script>

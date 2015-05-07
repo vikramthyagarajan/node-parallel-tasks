@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     docs:{
-      src:['lib/**/*.js','config/*/*.js'],
+      src:['lib/**/*.js','config/*/*.js','README.md'],
       destination:'docs'
     },
     watch:{
