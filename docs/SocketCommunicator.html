@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: PortScanner</title>
+    <title>JSDoc: Class: SocketCommunicator</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: PortScanner</h1>
+    <h1 class="page-title">Class: SocketCommunicator</h1>
 
     
 
@@ -29,8 +29,10 @@
 <header>
     
         <h2>
-        PortScanner
+        SocketCommunicator
         </h2>
+        
+            <div class="class-description">A global singleton object that handles all network communication with the clients</div>
         
     
 </header>
@@ -41,15 +43,17 @@
         
 
     
+    <h2>Constructor</h2>
+    
 
-    <h4 class="name" id="PortScanner"><span class="type-signature"></span>new PortScanner<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SocketCommunicator"><span class="type-signature"></span>new SocketCommunicator<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Scans ports based on the lan subnet, port and timeout specified in its parameters
+    Default Constructor that initializes the Communicator
 </div>
 
 
@@ -58,58 +62,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">JSON</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Takes the following parameters-
-                      lan: The lan subnet, for example: 192.168.1
-                      port: The port to be scanned
-                      timeout: The maximum time to listen for replies</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -145,7 +97,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="portscanner.js.html">portscanner.js</a>, <a href="portscanner.js.html#line6">line 6</a>
+        <a href="socketcomm.js.html">socketcomm.js</a>, <a href="socketcomm.js.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -194,14 +146,14 @@
 
     
 
-    <h4 class="name" id="scanPorts"><span class="type-signature"></span>scanPorts<span class="signature">(callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".getSocketCommunicator"><span class="type-signature">(static) </span>getSocketCommunicator<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Function that scans every machine on the local area
+    Static Function to get the singleton SocketCommunicator
 </div>
 
 
@@ -210,55 +162,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback which executes after all ports are scanned. Returns error,array of connected machines</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -294,7 +197,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="portscanner.js.html">portscanner.js</a>, <a href="portscanner.js.html#line51">line 51</a>
+        <a href="socketcomm.js.html">socketcomm.js</a>, <a href="socketcomm.js.html#line93">line 93</a>
     </li></ul></dd>
     
 
@@ -325,14 +228,15 @@
 
     
 
-    <h4 class="name" id="~checkPort"><span class="type-signature">(inner) </span>checkPort<span class="signature">(port, host, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="emitEvent"><span class="type-signature"></span>emitEvent<span class="signature">(event, data, sockets, callback)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Function that checks connection with a specific host
+    Function that emits the specified event and data to all sockets. If an array of sockets are
+given, then the event is emitted to only those clients
 </div>
 
 
@@ -368,30 +272,7 @@
 
         <tr>
             
-                <td class="name"><code>port</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The port of the host to check; eg 8000</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>host</code></td>
+                <td class="name"><code>event</code></td>
             
 
             <td class="type">
@@ -407,7 +288,53 @@
 
             
 
-            <td class="description last">The host to check connection with; eg 192.168.2.2</td>
+            <td class="description last">The name of the event</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">JSON</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Data to be send</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sockets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Clients to emit event to (if applicable)</td>
         </tr>
 
     
@@ -430,7 +357,7 @@
 
             
 
-            <td class="description last">Callback which takes params error,status,host,port and socket</td>
+            <td class="description last">Called after all events are emitted</td>
         </tr>
 
     
@@ -471,7 +398,90 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="portscanner.js.html">portscanner.js</a>, <a href="portscanner.js.html#line23">line 23</a>
+        <a href="socketcomm.js.html">socketcomm.js</a>, <a href="socketcomm.js.html#line74">line 74</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="initalizeServer"><span class="type-signature"></span>initalizeServer<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Function that initializes the server to listen for connection on the specified port
+and starts listening for connections
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="socketcomm.js.html">socketcomm.js</a>, <a href="socketcomm.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
