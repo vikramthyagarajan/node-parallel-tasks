@@ -7,17 +7,27 @@ var PortScanner=require('./lib/portscanner.js');
 var currentSocketComm=SocketCommunicator.getSocketCommunicator();
 var currentPortScanner=new PortScanner({lan:config.lan,port:config.port});
 var executionEngine=ExecutionEngine.getExecutionEngine(currentSocketComm);
-currentPortScanner.scanPorts(function(err,connectedMachines){
-	console.log('Connected Machines are-');
-	console.log(connectedMachines)
-	currentSocketComm.connectTo(connectedMachines,function(){
-		console.log('connected is done');
-		executionEngine.executeMapReduce([1,2,3,4],function(elem,innerC) {
-			innerC(null,elem+1);
-		},function(err,results) {
-			console.log('got results');
-			console.log(results);
-		},{});
-	});
-});
 
+/**
+ * Function that scans and connects to all available machines in the local network. Required befor doing all operations
+ *
+ */
+function initializeEngine(callback) {
+	currentPortScanner.scanPorts(function(err,connectedMachines){
+		winston.log('Found '+ connectedMachines.length +' machines in local network');
+		winston.info('Connected Machines are-');
+		winston.info(connectedMachines)
+		currentSocketComm.connectTo(connectedMachines,function(){
+			winston.log('connected to the machines');
+			callback();
+		});
+	});
+};
+
+module.exports = {
+	mapReduce: function(arr, map, reduce) {
+		initializeEngine(function() {
+			executionEngine.executeMapReduce(arr, map, reduce);
+		});
+	}
+};
