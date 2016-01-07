@@ -1,13 +1,30 @@
 # node-parallel-tasks
 A tool to share tasks among machines in your localhost
 
-## Install and set up
-git clone https://github.com/vikramthyagarajan/node-parallel-tasks.git
-cd node-parallel-tasks
-npm install
+This module can be run as a daemon on machines in your local area. This allows them to accept connections
+in order to share tasks. When tasks need to be shared, then require this module in your code, and
+the task gets equally divided into all the machines in you local area which have this module running.
 
-## Run
-node .
+## Install and run as daemon
+```
+npm install -g node-parallel-tasks
+node-parallel-tasks --daemon
+```
+
+## Install and use as an npm module
+In your project directory, run
+```
+npm install node-parallel-tasks
+```
+Then, require the module and use it in your code
+```
+var asyncParallel = require('node-parallel-tasks');
+asyncParallel.mapReduce([1,2,3,4], function map() {
+	callback(null, elem+1);
+}, function reduce(err, results) {
+	//results show [2,3,4,5]
+});
+```
 
 ##Documentation
 There are 2 ways to check out the docs-
