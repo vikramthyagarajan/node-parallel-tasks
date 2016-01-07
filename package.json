@@ -1,6 +1,6 @@
 {
   "name": "node-parallel-tasks",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A tool to share tasks among machines in your local area network",
   "main": "main.js",
   "scripts": {
@@ -11,14 +11,15 @@
     "url": "https://github.com/vikramthyagarajan/node-parallel-tasks.git"
   },
   "keywords": [
-    "forever",
+    "daemon",
     "nodejs",
     "tasks",
     "parallel",
     "computing",
     "networks",
+    "networking",
     "service",
-    "forever",
+    "hadoop",
     "portscanner"
   ],
   "author": "Vikram Thyagarajan",
