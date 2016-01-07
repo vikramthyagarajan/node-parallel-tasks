@@ -35,8 +35,7 @@ module.exports = {
 	mapReduce: function(arr, map, reduce) {
 		winston.info('adding task to queue');
 		queue.push(function(callback) {
-			executionEngine.executeMapReduce(arr, map, reduce);
-			callback();
+			executionEngine.executeMapReduce(arr, map, reduce, {scope: {}}, callback);
 		});
 	}
 };
