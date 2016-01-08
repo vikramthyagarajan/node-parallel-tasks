@@ -56,13 +56,16 @@ function initializeEnvironment() {
  *
  */
 function initializeEngine() {
-	currentPortScanner.scanPorts(function(err,connectedMachines){
-		winston.log('Found '+ connectedMachines.length +' machines in local network');
-		winston.info('Connected Machines are-');
-		winston.info(connectedMachines)
-		currentSocketComm.connectTo(connectedMachines,function(){
-			winston.log('connected to the machines');
-			queue.resume();
+	//make sure the scanning of ports is done only after the local server has been initialized
+	currentSocketComm.on('server initialized', function() {
+		currentPortScanner.scanPorts(function(err,connectedMachines){
+			winston.log('Found '+ connectedMachines.length +' machines in local network');
+			winston.info('Connected Machines are-');
+			winston.info(connectedMachines)
+			currentSocketComm.connectTo(connectedMachines,function(){
+				winston.log('connected to the machines');
+				queue.resume();
+			});
 		});
 	});
 };
