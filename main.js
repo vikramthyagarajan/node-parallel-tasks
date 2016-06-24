@@ -76,5 +76,10 @@ module.exports = {
 		queue.push(function(callback) {
 			executionEngine.executeMapReduce(arr, map, reduce, {scope: {}}, callback);
 		});
+	},
+	parallel: function(func1,func2){
+		console.log("Parallel function");
+		func1();
+		func2();
 	}
 };

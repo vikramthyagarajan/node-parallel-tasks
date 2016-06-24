@@ -13,3 +13,10 @@ asyncParallel.mapReduce([5,6,7,8], function(elem, innerC) {
 	console.log('two');
 	console.log(results);
 });
+asyncParallel.parallel( function() {
+	setTimeout(function() {
+		console.log("Executing locally.");
+	}, 2000);
+}, function() {
+	console.log("Done executing on all machines");
+});
