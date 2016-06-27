@@ -70,16 +70,17 @@ function initializeEngine() {
 	});
 };
 
-module.exports = {
+module.exports =  {
 	mapReduce: function(arr, map, reduce) {
 		winston.info('adding task to queue');
 		queue.push(function(callback) {
 			executionEngine.executeMapReduce(arr, map, reduce, {scope: {}}, callback);
 		});
 	},
-	parallel: function(func1,func2){
-		console.log("Parallel function");
-		func1();
-		func2();
+	parallel: function(map, reduce){
+		winston.info('adding task to queue');
+		queue.push(function(callback){
+			executionEngine.executeParallel(map, reduce, {scope: {}}, callback);
+		});
 	}
 };
