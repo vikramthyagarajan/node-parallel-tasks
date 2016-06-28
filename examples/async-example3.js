@@ -1,6 +1,6 @@
 var asyncParallel=require('../main.js');
 
-asyncParallel.parallel(function(cb) {
+asyncParallel.broadcast(function(cb) {
 	setTimeout(function() {
 		console.log("Executing locally.");
 		cb();

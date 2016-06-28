@@ -77,10 +77,16 @@ module.exports =  {
 			executionEngine.executeMapReduce(arr, map, reduce, {scope: {}}, callback);
 		});
 	},
-	parallel: function(map, reduce){
+	broadcast: function(map, reduce){
 		winston.info('adding task to queue');
 		queue.push(function(callback){
-			executionEngine.executeParallel(map, reduce, {scope: {}}, callback);
+			executionEngine.executeBroadcast(map, reduce, {scope: {}}, callback);
+		});
+	},
+	parallel: function(arr, map, reduce){
+		winston.info('adding task to queue');
+		queue.push(function(callback){
+			executionEngine.executeParallel(arr, map, reduce, {scope: {}}, callback);
 		});
 	}
 };
