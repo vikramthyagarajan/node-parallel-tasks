@@ -9,10 +9,6 @@ var SocketCommunicator=require('./lib/socketcomm.js');
 var ExecutionEngine=require('./lib/executionengine.js');
 var PortScanner=require('./lib/portscanner.js');
 
-
-
-
-
 var args = process.argv;
 var isDaemon = _.includes(args, "--daemon");
 if (isDaemon) {

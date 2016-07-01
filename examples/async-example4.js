@@ -4,7 +4,6 @@ var function1 = function(cb){
   console.log("Printing Function 1");
   cb();
 }
-
 var function2 = function(cb){
   var self = this;
   setTimeout(function(){
