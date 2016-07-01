@@ -9,6 +9,10 @@ var SocketCommunicator=require('./lib/socketcomm.js');
 var ExecutionEngine=require('./lib/executionengine.js');
 var PortScanner=require('./lib/portscanner.js');
 
+
+
+
+
 var args = process.argv;
 var isDaemon = _.includes(args, "--daemon");
 if (isDaemon) {
@@ -28,7 +32,6 @@ if (isDaemon) {
 			process.exit(0);
 		}
 	});
-	console.log(process.pid);
 }
 else initializeEnvironment();
 
@@ -52,7 +55,7 @@ function initializeEnvironment() {
 
 
 /**
- * Function that scans and connects to all available machines in the local network. Required befor doing all operations
+ * Function that scans and connects to all available machines in the local network. Required before doing all operations
  *
  */
 function initializeEngine() {
