@@ -26,10 +26,10 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var statuses=['idle','awaitingOrders','environmentInitialized','processed','aggregatingResults'];
-var clientEvents=['requestResource','readyEnvironment','startExecution','finish'];
-var serverEvents=['resourceAvailable','environmentReady','executionDone'];
-
+            <pre class="prettyprint source linenums"><code>var statuses = ['idle', 'awaitingOrders', 'environmentInitialized', 'processed', 'aggregatingResults'];
+var clientEvents = ['requestResource', 'readyEnvironment', 'startExecution', 'finish'];
+var serverEvents=['resourceAvailable', 'environmentReady', 'executionDone'];
+var winston = require('winston');
 /**
  * Constructor that creates a CommunicationEngine of a particular socket
  * @class
@@ -38,12 +38,12 @@ var serverEvents=['resourceAvailable','environmentReady','executionDone'];
  * @param {Socket} socket The Socket that this is the engine for
  * @param {ExecutionEngine} executionEngine The global singleton Engine
  */
-function CommunicationEngine(socket,executionEngine){
+function CommunicationEngine(socket, executionEngine) {
  	// Here, the status describes the status of the socket only. The status of the execution is in the ExecutionEngine.
-	this.socket=socket;
+	this.socket = socket;
 	// this.host=socket.io.opts.host;
-	this.executionEngine=executionEngine;
-	this.status='idle';
+	this.executionEngine = executionEngine;
+	this.status = 'idle';
 	this.initializeEngine();
 };
 /**
@@ -51,46 +51,49 @@ function CommunicationEngine(socket,executionEngine){
  * @function
  */
 CommunicationEngine.prototype.initializeEngine = function() {
-	var commEngine=this;
-	this.socket.on('requestResource',function(data){
-		console.log('this computer is requested as a resource');
-		if(commEngine.status=='idle'){
+	var commEngine = this;
+	this.socket.on('requestResource', function(data) {
+		winston.info('this computer is requested as a resource');
+		if(commEngine.status == 'idle') {
 			commEngine.socket.emit('resourceAvailable');
-			commEngine.status=['awaitingOrders'];
+			commEngine.status = ['awaitingOrders'];
 		}
 	});
-	this.socket.on('readyEnvironment',function(data){
-		console.log('asked to ready environment');
-		commEngine.executionEngine.initializeEnvironment(data,function() {
-			commEngine.status='environmentInitialized';
+	this.socket.on('readyEnvironment', function(data) {
+		winston.info('asked to ready environment');
+		commEngine.executionEngine.initializeEnvironment(data, function() {
+			commEngine.status = 'environmentInitialized';
 			commEngine.socket.emit('environmentReady');
 		});
 	});
-	this.socket.on('startExecution',function(data){
-		console.log('starting execution');
-		commEngine.executionEngine.executeMapFunction(function(err,results) {
-			commEngine.status='processed';
-			commEngine.socket.emit('executionDone',{err:err,results:results});
+	this.socket.on('startExecution', function(data) {
+		winston.info('starting execution');
+		commEngine.executionEngine.executeMapFunction(function(err, results) {
+			commEngine.status = 'processed';
+			commEngine.socket.emit('executionDone', {err: err, results: results});
 		});
 	});
-	this.socket.on('resourceAvailable',function(data){
-		console.log('someone is available');
-		commEngine.status='awaitingOrders';
+	this.socket.on('resourceAvailable', function(data) {
+		winston.info('someone is available');
+		commEngine.status = 'awaitingOrders';
 		commEngine.executionEngine.addToResources(commEngine);
 	});
-	this.socket.on('environmentReady',function(data){
-		console.log('a resource has initialized its environment');
-		commEngine.status='environmentInitialized';
+	this.socket.on('environmentReady', function(data) {
+		winston.info('a resource has initialized its environment');
+		commEngine.status = 'environmentInitialized';
 		commEngine.executionEngine.onSocketEnvironmentInitialized(commEngine);
 	});
-	this.socket.on('executionDone',function(data){
-		commEngine.executionEngine.aggregateResults(commEngine,data.err,data.results,function() {
-			commEngine.status='idle';
+	this.socket.on('executionDone', function(data) {
+		commEngine.executionEngine.aggregateResults(commEngine, data.err, data.results, function() {
+			commEngine.status = 'idle';
 			commEngine.socket.emit('finish');
 		});
 	});
-	this.socket.on('finish',function(data) {
+	this.socket.on('finish', function(data) {
 		commEngine.status='idle';
+	});
+	this.socket.on('message', function(data) {
+		console.log(data);
 	});
 };
 /**
@@ -99,10 +102,9 @@ CommunicationEngine.prototype.initializeEngine = function() {
  * @param  {JSON} data The data that must be sent
  */
 CommunicationEngine.prototype.emitEnvironmentData = function(data) {
-	this.socket.emit('readyEnvironment',data);
+	this.socket.emit('readyEnvironment', data);
 };
-
-module.exports=CommunicationEngine;
+module.exports = CommunicationEngine;
 </code></pre>
         </article>
     </section>
@@ -113,13 +115,13 @@ module.exports=CommunicationEngine;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationEngine.html">CommunicationEngine</a></li><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SocketCommunicator.html">SocketCommunicator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationEngine.html">CommunicationEngine</a></li><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SocketCommunicator.html">SocketCommunicator</a></li><li><a href="StreamLogger.html">StreamLogger</a></li></ul><h3>Global</h3><ul><li><a href="global.html#onResourceAcquisitionTimeout">onResourceAcquisitionTimeout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Thu May 07 2015 15:03:02 GMT+0530 (IST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Jul 02 2016 13:02:58 GMT+0530 (IST)
 </footer>
 
 <script> prettyPrint(); </script>
