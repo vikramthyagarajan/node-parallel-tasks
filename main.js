@@ -28,7 +28,6 @@ if (isDaemon) {
 			process.exit(0);
 		}
 	});
-	console.log(process.pid);
 }
 else initializeEnvironment();
 
@@ -52,7 +51,7 @@ function initializeEnvironment() {
 
 
 /**
- * Function that scans and connects to all available machines in the local network. Required befor doing all operations
+ * Function that scans and connects to all available machines in the local network. Required before doing all operations
  *
  */
 function initializeEngine() {
@@ -70,11 +69,23 @@ function initializeEngine() {
 	});
 };
 
-module.exports = {
+module.exports =  {
 	mapReduce: function(arr, map, reduce) {
 		winston.info('adding task to queue');
 		queue.push(function(callback) {
 			executionEngine.executeMapReduce(arr, map, reduce, {scope: {}}, callback);
+		});
+	},
+	broadcast: function(map, reduce){
+		winston.info('adding task to queue');
+		queue.push(function(callback){
+			executionEngine.executeBroadcast(map, reduce, {scope: {}}, callback);
+		});
+	},
+	parallel: function(arr, map, reduce){
+		winston.info('adding task to queue');
+		queue.push(function(callback){
+			executionEngine.executeParallel(arr, map, reduce, {scope: {}}, callback);
 		});
 	}
 };
