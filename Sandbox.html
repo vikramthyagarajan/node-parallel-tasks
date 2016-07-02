@@ -28,12 +28,11 @@
 
 <header>
     
-        <h2>
-        Sandbox
-        </h2>
+        <h2>Sandbox</h2>
         
             <div class="class-description">All executions in the system happen within a Sandbox. Every map and reduce function is executed here. All environment
-initializations also happen within the sandbox. It holds the custom scope that every function is supposed to run on.</div>
+initializations also happen within the sandbox. It holds the custom scope that every function is supposed to run on.
+Also, the stream logger is set as a utility for the sandbox.</div>
         
     
 </header>
@@ -94,7 +93,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line7">line 7</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -194,7 +193,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line13">line 13</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -325,7 +324,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line64">line 64</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line123">line 123</a>
     </li></ul></dd>
     
 
@@ -356,7 +355,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
 
     
 
-    <h4 class="name" id="executeReduceFunction"><span class="type-signature"></span>executeReduceFunction<span class="signature">(finalCallback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="executeReduceFunction"><span class="type-signature"></span>executeReduceFunction<span class="signature">(err, results, finalCallback)</span><span class="type-signature"></span></h4>
 
     
 
@@ -395,6 +394,52 @@ initializations also happen within the sandbox. It holds the custom scope that e
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>err</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The error object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The results object.</td>
+        </tr>
+
     
 
         <tr>
@@ -456,7 +501,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line71">line 71</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -538,7 +583,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line49">line 49</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -565,7 +610,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
 
         
 <div class="param-desc">
-    The data that needs to be emitted. The Map, Reduce and the Scope
+    data The data that needs to be emitted. The Map, Reduce and the Scope
 </div>
 
 
@@ -583,6 +628,337 @@ initializations also happen within the sandbox. It holds the custom scope that e
 </dl>
 
     
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="initializeEnvironment"><span class="type-signature"></span>initializeEnvironment<span class="signature">(data, finalCallback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Function to initialize Sandbox for executing remote procedures
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">JSON</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The data object that contains the map and reduce functions along with scope.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>finalCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The final callback to be called.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line93">line 93</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="initializeParallelSandbox"><span class="type-signature"></span>initializeParallelSandbox<span class="signature">(map, reduce, scope)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Function to initialize Sandbox for the Parallel functionality, which does not contain an array.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>map</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The map function that has to be executed</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>reduce</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The reduce function that has to be executed on the server</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scope</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">JSON</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The custom scope that each function needs to be run on</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line53">line 53</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -737,7 +1113,138 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line26">line 26</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="initializeUtilities"><span class="type-signature"></span>initializeUtilities<span class="signature">(streamlogger)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Function to set the stream logger as a utility
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>streamlogger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The stream logger object.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line157">line 157</a>
     </li></ul></dd>
     
 
@@ -868,7 +1375,7 @@ initializations also happen within the sandbox. It holds the custom scope that e
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line42">line 42</a>
+        <a href="sandbox.js.html">sandbox.js</a>, <a href="sandbox.js.html#line70">line 70</a>
     </li></ul></dd>
     
 
@@ -910,13 +1417,13 @@ initializations also happen within the sandbox. It holds the custom scope that e
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationEngine.html">CommunicationEngine</a></li><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SocketCommunicator.html">SocketCommunicator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationEngine.html">CommunicationEngine</a></li><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SocketCommunicator.html">SocketCommunicator</a></li><li><a href="StreamLogger.html">StreamLogger</a></li></ul><h3>Global</h3><ul><li><a href="global.html#onResourceAcquisitionTimeout">onResourceAcquisitionTimeout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 17:57:42 GMT+0530 (IST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Jul 02 2016 13:23:58 GMT+0530 (IST)
 </footer>
 
 <script> prettyPrint(); </script>

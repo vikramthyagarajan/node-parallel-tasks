@@ -27,81 +27,168 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>var async=require('async');
+
 /**
  * @class
  * All executions in the system happen within a Sandbox. Every map and reduce function is executed here. All environment
  * initializations also happen within the sandbox. It holds the custom scope that every function is supposed to run on.
+ * Also, the stream logger is set as a utility for the sandbox.
  */
-function Sandbox() {
+
+function Sandbox(streamlogger) {
 	this.cleanSandbox();
+	this.initializeUtilities(streamlogger);
 }
 /**
  * Function to clean and reset the Sandbox
  */
 Sandbox.prototype.cleanSandbox = function() {
-	this.mapFunction="";
-	this.reduceFunction="";
-	this.array=[];
-	this.options={};
-	this.scope=null;
+	this.mapFunction = "";
+	this.reduceFunction = "";
+	this.array = [];
+	this.options = {};
+	this.scope = null;
 };
+
+
 /**
  * Function to initialize Sandbox for executing remote procedures
+ * @function
  * @param  {Function} map    The map function that has to be executed
  * @param  {Function} reduce The reduce function that has to be executed on the server
  * @param  {JSON} scope  The custom scope that each function needs to be run on
  */
-Sandbox.prototype.initializeSandbox = function(array,map,reduce,scope) {
-	if(map&amp;&amp;typeof map=='String'){
-		this.mapFunction=eval(map);
+
+Sandbox.prototype.initializeSandbox = function(array, map, reduce, scope) {
+	if(map &amp;&amp; typeof map == 'string') {
+		this.mapFunction = eval(map);
 	}
-	else this.mapFunction=map;
-	if(reduce&amp;&amp;typeof reduce=='String'){
-		this.reduceFunction=eval(reduce);
+	else this.mapFunction = map;
+	if(reduce &amp;&amp; typeof reduce == 'string') {
+		this.reduceFunction = eval(reduce);
 	}
-	else this.reduceFunction=reduce;
-	this.array=array;
-	this.scope=scope;
+	else this.reduceFunction = reduce;
+	this.array = array;
+	this.scope = scope;
 };
+/**
+ * Function to initialize Sandbox for the Parallel functionality, which does not contain an array.
+ * @function
+ * @param  {Function} map    The map function that has to be executed
+ * @param  {Function} reduce The reduce function that has to be executed on the server
+ * @param  {JSON} scope  The custom scope that each function needs to be run on
+ */
+Sandbox.prototype.initializeParallelSandbox = function(map, reduce, scope) {
+	if(map &amp;&amp; typeof map == 'string') {
+		this.mapFunction = eval(map);
+	}
+	else this.mapFunction = map;
+	if(reduce &amp;&amp; typeof reduce == 'string') {
+		this.reduceFunction = eval(reduce);
+	}
+	else this.reduceFunction = reduce;
+	this.scope = scope;
+}
+
+
 /**
  * Setter for the array variable
  * @param {Array} array The array to be set
  */
 Sandbox.prototype.setArray = function(array) {
-	this.array=array;
+	this.array = array;
 };
-/**
+
+ /**
  * Getter to get the data which will be emitted to other sockets
- * @return {JSON} The data that needs to be emitted. The Map, Reduce and the Scope
+ * @function
+ * @return {JSON} data The data that needs to be emitted. The Map, Reduce and the Scope
  */
 Sandbox.prototype.getSandboxEmitData = function() {
-	var data={
-		mapFunction:this.mapFunction.toString(),
-		reduceFunction:this.reduceFunction.toString(),
-		scope:this.scope
+	var data = {
+		mapFunction: this.mapFunction.toString(),
+		reduceFunction: this.reduceFunction.toString(),
+		scope: this.scope
 	};
 	return data;
 };
-Sandbox.prototype.initializeEnvironment = function(finalCallback) {
+/**
+* Function to initialize Sandbox for executing remote procedures
+* @function
+* @param {JSON} data The data object that contains the map and reduce functions along with scope.
+* @param {function} finalCallback The final callback to be called.
+*/
+Sandbox.prototype.initializeEnvironment = function(data, finalCallback) {
+	map = data.mapFunction;
+  reduce = data.reduceFunction;
+	var i = 0;
+	var func_arr = []
+	if (data.array) {
+		for (i = 0; i &lt; data.array.length; i++) {
+			func_arr.push(eval('('+data.arrn[i]+')'));
+		}
+	}
+	scope = data.scope;
+	if (map &amp;&amp; typeof map == 'string') {
+		this.mapFunction=eval('('+map+')');
+	}
+	else this.mapFunction = map;
+	if (reduce &amp;&amp; typeof reduce == 'string') {
+		this.reduceFunction=eval('('+reduce+')');
+	}
+	else this.reduceFunction = reduce;
+	if (data.array) {
+		this.array = data.array;
+	}
+	this.arrn = func_arr;
 	finalCallback();
 };
+
 /**
  * Trigger to execute the Map Function
  * @param  {Function} finalCallback Callback called at the end of the Map Function execution. Returns err and results
  */
 Sandbox.prototype.executeMapFunction = function(finalCallback) {
-	async.map.call(this.scope,this.array,this.mapFunction,finalCallback);
+	if (this.array.length == 0) {
+		async.series([this.mapFunction.bind(this.utilities), finalCallback]);
+	}
+	else {
+		var i = 0;
+		if (this.array[0] != null) {
+			async.map.call({}, this.array, this.mapFunction.bind(this.utilities), finalCallback);
+		}
+		else{
+			var i = 0;
+		  for (i = 0; i &lt; this.arrn.length; i++) {
+				this.arrn[i] = this.arrn[i].bind(this.utilities)
+			}
+			async.series(this.arrn, function() {
+				finalCallback();
+			});
+		}
+	}
 };
 /**
  * Trigger to execute the Reduce Function
+ * @param  {object} err The error object.
+ * @param  {object} results The results object.
  * @param  {Function} finalCallback Callback called at the end of the Reduce Function execution.
  */
-Sandbox.prototype.executeReduceFunction = function(err,results,finalCallback) {
-	var result=this.reduceFunction.call(this.scope,err,results);
+Sandbox.prototype.executeReduceFunction = function(err, results, finalCallback) {
+	this.reduceFunction.call(this.scope, err, results);
 	finalCallback();
 };
-
-module.exports=Sandbox;</code></pre>
+/**
+ * Function to set the stream logger as a utility
+ * @param  {Object} streamlogger The stream logger object.
+ */
+Sandbox.prototype.initializeUtilities = function(streamlogger) {
+	this.utilities = {
+		logger: streamlogger
+	}
+}
+module.exports = Sandbox;
+</code></pre>
         </article>
     </section>
 
@@ -111,13 +198,13 @@ module.exports=Sandbox;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationEngine.html">CommunicationEngine</a></li><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SocketCommunicator.html">SocketCommunicator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationEngine.html">CommunicationEngine</a></li><li><a href="ExecutionEngine.html">ExecutionEngine</a></li><li><a href="PortScanner.html">PortScanner</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SocketCommunicator.html">SocketCommunicator</a></li><li><a href="StreamLogger.html">StreamLogger</a></li></ul><h3>Global</h3><ul><li><a href="global.html#onResourceAcquisitionTimeout">onResourceAcquisitionTimeout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 17:57:42 GMT+0530 (IST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Jul 02 2016 13:23:58 GMT+0530 (IST)
 </footer>
 
 <script> prettyPrint(); </script>

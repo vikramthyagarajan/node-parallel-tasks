@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Global</title>
+    <title>JSDoc: Class: StreamLogger</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Global</h1>
+    <h1 class="page-title">Class: StreamLogger</h1>
 
     
 
@@ -28,7 +28,9 @@
 
 <header>
     
-        <h2></h2>
+        <h2>StreamLogger</h2>
+        
+            <div class="class-description">The Stream Logger class which sends the message to be logged to the server</div>
         
     
 </header>
@@ -38,74 +40,19 @@
     
         
 
-        
-
-
-<dl class="details">
-
+    
+    <h2>Constructor</h2>
     
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id="onResourceAcquisitionTimeout"><span class="type-signature"></span>onResourceAcquisitionTimeout<span class="signature">(array, resources, sandbox, socketCommunicator, currentEngine)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StreamLogger"><span class="type-signature"></span>new StreamLogger<span class="signature">(SocketCommunicator)</span><span class="type-signature"></span></h4>
 
     
 
 
+
+<div class="description">
+    Default constructor that initializes the socket communicator
+</div>
 
 
 
@@ -140,13 +87,13 @@
 
         <tr>
             
-                <td class="name"><code>array</code></td>
+                <td class="name"><code>SocketCommunicator</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array</span>
+<span class="param-type">JSON</span>
 
 
             
@@ -156,99 +103,7 @@
 
             
 
-            <td class="description last">The whole array that needs to be shared</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>resources</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The current set of resources</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sandbox</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Sandbox.html">Sandbox</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The current Sandbox that is being used</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>socketCommunicator</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="SocketCommunicator.html">SocketCommunicator</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The global singleton SocketCommunicator of this instance</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>currentEngine</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="ExecutionEngine.html">ExecutionEngine</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The self ExecutionEngine for making changes</td>
+            <td class="description last">The SocketCommunicator object which will send data</td>
         </tr>
 
     
@@ -289,7 +144,156 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="executionengine.js.html">executionengine.js</a>, <a href="executionengine.js.html#line54">line 54</a>
+        <a href="streamlogger.js.html">streamlogger.js</a>, <a href="streamlogger.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="log"><span class="type-signature"></span>log<span class="signature">(data)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    The logging function which emits the message to be logged to the communication engine
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The message to be logged on the server</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="streamlogger.js.html">streamlogger.js</a>, <a href="streamlogger.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
