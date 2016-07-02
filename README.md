@@ -28,16 +28,16 @@ asyncParallel.mapReduce([1,2,3,4], function map() {
 
 ## Usage
 There are 3 functions as of now to share tasks among local machines-
-1. MapReduce - Takes an array, a map function, and a reduce function. It shares the array among machines available, runs the map function on the machines. The results are then sent to the source machine and the reduce function is run on it.
-2. Broadcast - Takes a broadcast function and a callback function. Runs the broadcast function on available machines and runs the callback on the source machine after all broadcasts are done
-3. Parallel - Takes an array of functions, and a callback function. It shares the array among available machines, and runs them on the machines. The results are sent to the source machine, where the callback is called
+- MapReduce - Takes an array, a map function, and a reduce function. It shares the array among machines available, runs the map function on the machines. The results are then sent to the source machine and the reduce function is run on it.
+- Broadcast - Takes a broadcast function and a callback function. Runs the broadcast function on available machines and runs the callback on the source machine after all broadcasts are done
+- Parallel - Takes an array of functions, and a callback function. It shares the array among available machines, and runs them on the machines. The results are sent to the source machine, where the callback is called
 
 You can check out the examples for further details
 
 ## Documentation
 There are 3 ways to check out the docs-
-1. Go to http://vikramthyagarajan.github.io/node-parallel-tasks/
-2. Go to the docs/ folder and open index.html
-3. Type 'grunt docs' in the terminal in the project. A window will open in your browser with the docs. 
+- Go to http://vikramthyagarajan.github.io/node-parallel-tasks/
+- Go to the docs/ folder and open index.html
+- Type 'grunt docs' in the terminal in the project. A window will open in your browser with the docs. 
 
 NOTE: You might need grunt installed to work on the docs.
