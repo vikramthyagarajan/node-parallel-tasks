@@ -1,6 +1,6 @@
 {
   "name": "node-parallel-tasks",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A tool to share tasks among machines in your local area network",
   "main": "main.js",
   "scripts": {
